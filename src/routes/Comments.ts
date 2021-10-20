@@ -1,7 +1,7 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const { Comments } = require("../models");
-const { validateToken } = require("../middleware/AuthMiddleWare");
+import { Comments } from "../models";
+import { validateToken } from "../middleware/AuthMiddleWare";
 
 router.get("/:postId", async (req, res) => {
   const postId = req.params.postId;

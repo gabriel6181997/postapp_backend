@@ -1,6 +1,7 @@
-const { verify } = require("jsonwebtoken");
+import { Request, Response, NextFunction } from "express";
+import { verify } from "jsonwebtoken";
 
-const validateToken = (req, res, next) => {
+export const validateToken = (req: Request, res: Response, next: NextFunction) => {
   const accessToken = req.header("accessToken");
 
   if (!accessToken) {
@@ -18,5 +19,3 @@ const validateToken = (req, res, next) => {
     return res.json({ error });
   }
 };
-
-module.exports = { validateToken };

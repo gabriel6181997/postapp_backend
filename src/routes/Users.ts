@@ -1,9 +1,9 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const { Users } = require("../models");
-const bcrypt = require("bcryptjs");
-const { validateToken } = require("../middleware/AuthMiddleWare");
-const { sign } = require("jsonwebtoken");
+import { Users } from "../models";
+import bcrypt from "bcryptjs";
+import { validateToken } from "../middleware/AuthMiddleWare";
+import { sign } from "jsonwebtoken";
 
 router.post("/", async (req, res) => {
   const { username, password } = req.body;
