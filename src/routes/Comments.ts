@@ -1,9 +1,10 @@
-import express from "express";
-const router = express.Router();
-import { Comments } from "../models";
+import { Router } from 'express'
+import { Comments } from "../models/Comments";
 import { validateToken } from "../middleware/AuthMiddleWare";
 
-router.get("/:postId", async (req, res) => {
+export const commentRouter = Router();
+
+commentRouter.get("/:postId", async (req, res) => {
   const postId = req.params.postId;
   const comments = await Comments.findAll({
     where: { PostId: postId },
@@ -11,7 +12,7 @@ router.get("/:postId", async (req, res) => {
   res.json(comments);
 });
 
-router.post("/", validateToken, async (req, res) => {
+commentRouter.post("/", validateToken, async (req, res) => {
   const comment = req.body;
   const username = req.user.username;
   comment.username = username;
@@ -19,10 +20,9 @@ router.post("/", validateToken, async (req, res) => {
   res.json(comment);
 });
 
-router.delete("/:commentId", validateToken, async (req, res) => {
+commentRouter.delete("/:commentId", validateToken, async (req, res) => {
   const commentId = req.params.commentId;
   await Comments.destroy({ where: { id: commentId } });
   res.json("Deleted successfully!");
 });
 
-module.exports = router;

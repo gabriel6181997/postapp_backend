@@ -1,11 +1,12 @@
-import express from "express";
-const router = express.Router();
-import { Users } from "../models";
+import { Router } from "express";
+import { Users } from "../models/Users";
 import bcrypt from "bcryptjs";
-import { validateToken } from "../middleware/AuthMiddleWare";
+import { validateToken } from "../middleware/AuthMiddleware";
 import { sign } from "jsonwebtoken";
 
-router.post("/", async (req, res) => {
+export const userRouter = Router();
+
+userRouter.post("/", async (req, res) => {
   const { username, password } = req.body;
   bcrypt.hash(password, 10).then((hash) => {
     Users.create({
@@ -16,7 +17,7 @@ router.post("/", async (req, res) => {
   });
 });
 
-router.post("/login", async (req, res) => {
+userRouter.post("/login", async (req, res) => {
   const { username, password } = req.body;
 
   const user = await Users.findOne({
@@ -42,11 +43,11 @@ router.post("/login", async (req, res) => {
   });
 });
 
-router.get("/auth", validateToken, (req, res) => {
+userRouter.get("/auth", validateToken, (req, res) => {
   res.json(req.user);
 });
 
-router.get("/basicinfo/:id", async (req, res) => {
+userRouter.get("/basicinfo/:id", async (req, res) => {
   const id = req.params.id;
 
   const basicInfo = await Users.findByPk(id, {
@@ -56,7 +57,7 @@ router.get("/basicinfo/:id", async (req, res) => {
   res.json(basicInfo);
 });
 
-router.put("/changepassword", validateToken, async (req, res) => {
+userRouter.put("/changepassword", validateToken, async (req, res) => {
   const { oldPassword, newPassword } = req.body;
   const user = await Users.findOne({
     where: {
@@ -78,5 +79,3 @@ router.put("/changepassword", validateToken, async (req, res) => {
     });
   });
 });
-
-module.exports = router;

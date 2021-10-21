@@ -1,9 +1,10 @@
-import express from "express";
+import { Router } from "express";
 import { validateToken } from "../middleware/AuthMiddleware";
-const router = express.Router();
-import { Likes } from "../models";
+import { Likes } from "../models/Likes";
 
-router.post("/", validateToken, async (req, res) => {
+export const likeRouter = Router();
+
+likeRouter.post("/", validateToken, async (req, res) => {
   const { PostId } = req.body;
   const UserId = req.user.id;
 
@@ -19,7 +20,7 @@ router.post("/", validateToken, async (req, res) => {
       PostId,
       UserId,
     });
-    res.json({liked: true});
+    res.json({ liked: true });
   } else {
     await Likes.destroy({
       where: {
@@ -27,8 +28,6 @@ router.post("/", validateToken, async (req, res) => {
         UserId,
       },
     });
-    res.json({liked: false});
+    res.json({ liked: false });
   }
 });
-
-module.exports = router;
