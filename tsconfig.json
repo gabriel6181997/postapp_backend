@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "target": "es6", // or a more recent ecmascript version
+    "target": "es5", // or a more recent ecmascript version
+    "module": "commonjs",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "outDir": "./dist",
