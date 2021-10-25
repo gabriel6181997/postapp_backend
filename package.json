@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "start": "node dist/index.js",
-    "dev": "nodemon index.js"
+    "dev": "tsnd --respawn src/index.ts"
   },
   "dependencies": {
     "@swc/core": "^1.2.102",
