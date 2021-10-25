@@ -1,7 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import { verify } from "jsonwebtoken";
 
-export const validateToken = (req: Request, res: Response, next: NextFunction) => {
+export const validateToken = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const accessToken = req.header("accessToken");
 
   if (!accessToken) {
