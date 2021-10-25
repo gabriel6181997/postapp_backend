@@ -1,9 +1,9 @@
-import { UsersInstance } from "@src/models/Users";
+import { UsersAttributes } from "@src/models/Users";
 
 declare global {
   namespace Express {
     interface Request {
-      user: UsersInstance;
+      user: UsersAttributes;
       accessToken: string;
     }
   }
