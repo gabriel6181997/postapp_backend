@@ -1,44 +1,49 @@
-import { DataTypes, Model, Optional } from "sequelize";
-import { sequelize } from ".";
-import { Likes } from "./Likes";
-import { Posts } from "./Posts";
+import db from "@src/models";
+import { DataTypes, Model } from "sequelize";
 
-interface UsersAttributes {
-  id: number;
+export interface UsersAttributes {
+  id?: number;
   username: string;
   password: string;
 }
 
-interface UsersCreationAttributes extends Optional<UsersAttributes, "id"> {}
+export class Users extends Model<UsersAttributes> implements UsersAttributes {
+  id!: number;
+  username!: string;
+  password!: string;
+  readonly createdAt!: Date;
+  readonly updatedAt!: Date;
 
-export interface UsersInstance
-  extends Model<UsersAttributes, UsersCreationAttributes> {
-  createdAt?: Date;
-  updatedAt?: Date;
+  static associate(models: any) {
+    Users.hasMany(models.Likes, {
+      onDelete: "cascade",
+    });
+    Users.hasMany(models.Posts, {
+      onDelete: "cascade",
+    });
+  }
 }
 
-export const Users = sequelize.define<UsersInstance>("Users", {
-  id: {
-    allowNull: false,
-    autoIncrement: false,
-    primaryKey: true,
-    type: DataTypes.UUID,
-    unique: true,
+Users.init(
+  {
+    id: {
+      allowNull: false,
+      autoIncrement: false,
+      primaryKey: true,
+      type: DataTypes.UUID,
+      unique: true,
+    },
+    username: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
   },
-  username: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  password: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-});
-
-Users.hasMany(Likes, {
-  onDelete: "cascade",
-});
-
-Users.hasMany(Posts, {
-  onDelete: "cascade",
-});
+  {
+    sequelize: db,
+    modelName: "Users",
+  }
+);

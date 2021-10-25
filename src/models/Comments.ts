@@ -1,6 +1,5 @@
-import { DataTypes, Model, Optional } from "sequelize";
-import { sequelize } from ".";
-import { Posts } from "./Posts";
+import db from "./index";
+import { DataTypes, Model } from "sequelize";
 
 interface CommentsAttributes {
   id: number;
@@ -8,35 +7,42 @@ interface CommentsAttributes {
   username: string;
 }
 
-interface CommentsCreationAttributes
-  extends Optional<CommentsAttributes, "id"> {}
+export class Comments extends Model<CommentsAttributes> {
+  id!: number;
+  commentBody!: string;
+  username!: string;
+  readonly createdAt!: Date;
+  readonly updatedAt!: Date;
 
-interface CommentsInstance
-  extends Model<CommentsAttributes, CommentsCreationAttributes> {
-  createdAt?: Date;
-  updatedAt?: Date;
+  static associate(models: any) {
+    Comments.belongsTo(models.Posts, {
+      foreignKey: "PostId",
+      onDelete: "cascade",
+      as: "post",
+    });
+  }
 }
 
-export const Comments = sequelize.define<CommentsInstance>("Comments", {
-  id: {
-    allowNull: false,
-    autoIncrement: false,
-    primaryKey: true,
-    type: DataTypes.UUID,
-    unique: true,
+Comments.init(
+  {
+    id: {
+      allowNull: false,
+      autoIncrement: false,
+      primaryKey: true,
+      type: DataTypes.UUID,
+      unique: true,
+    },
+    commentBody: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    username: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
   },
-  commentBody: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  username: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-});
-
-Comments.belongsTo(Posts, {
-  foreignKey: "PostId",
-  onDelete: "cascade",
-  as: "post",
-})
+  {
+    sequelize: db,
+    modelName: "Comments",
+  }
+);

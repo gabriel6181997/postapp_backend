@@ -1,8 +1,5 @@
-import { DataTypes, Model, Optional } from "sequelize";
-import { sequelize } from ".";
-import { Comments } from "./Comments";
-import { Likes } from "./Likes";
-import { Users } from "./Users";
+import db from "@src/models";
+import { DataTypes, Model } from "sequelize";
 
 interface PostsAttributes {
   id: number;
@@ -11,46 +8,53 @@ interface PostsAttributes {
   username: string;
 }
 
-interface PostsCreationAttributes extends Optional<PostsAttributes, "id"> {}
+export class Posts extends Model<PostsAttributes> implements PostsAttributes {
+  id!: number;
+  title!: string;
+  postText!: string;
+  username!: string;
+  readonly createdAt!: Date;
+  readonly updatedAt!: Date;
 
-interface PostsInstance
-  extends Model<PostsAttributes, PostsCreationAttributes> {
-  createdAt?: Date;
-  updatedAt?: Date;
+  static associate(models: any) {
+    Posts.hasMany(models.Comments, {
+      onDelete: "cascade",
+    });
+    Posts.hasMany(models.Likes, {
+      onDelete: "cascade",
+    });
+    Posts.belongsTo(models.Users, {
+      foreignKey: "UserId",
+      onDelete: "cascade",
+      as: "user",
+    });
+  }
 }
 
-export const Posts = sequelize.define<PostsInstance>("Posts", {
-  id: {
-    allowNull: false,
-    autoIncrement: false,
-    primaryKey: true,
-    type: DataTypes.UUID,
-    unique: true,
+Posts.init(
+  {
+    id: {
+      allowNull: false,
+      autoIncrement: false,
+      primaryKey: true,
+      type: DataTypes.UUID,
+      unique: true,
+    },
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    postText: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    username: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
   },
-  title: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  postText: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  username: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-});
-
-Posts.hasMany(Comments, {
-  onDelete: "cascade",
-});
-
-Posts.hasMany(Likes, {
-  onDelete: "cascade",
-});
-
-Posts.belongsTo(Users, {
-  foreignKey: "UserId",
-  onDelete: "cascade",
-  as: "user"
-})
+  {
+    sequelize: db,
+    modelName: "Posts",
+  }
+);

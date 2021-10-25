@@ -1,41 +1,38 @@
-import { DataTypes, Model, Optional } from "sequelize";
-import { sequelize } from ".";
-import { Posts } from "./Posts";
-import { Users } from "./Users";
+import db from "@src/models";
+import { DataTypes, Model } from "sequelize";
 
 interface LikesAttributes {
   id: number;
 }
 
-interface LikesCreationAttributes extends Optional<LikesAttributes, "id"> {}
+export class Likes extends Model<LikesAttributes> implements LikesAttributes {
+  id!: number;
+  readonly createdAt!: Date;
+  readonly updatedAt!: Date;
 
-interface LikesInstance
-  extends Model<LikesAttributes, LikesCreationAttributes> {
-  createdAt?: Date;
-  updatedAt?: Date;
+  static associate(models: any) {
+    Likes.belongsTo(models.Posts, {
+      foreignKey: "PostId",
+      onDelete: "cascade",
+      as: "post",
+    });
+
+    Likes.belongsTo(models.Users, {
+      foreignKey: "UserId",
+      onDelete: "cascade",
+      as: "user",
+    });
+  }
 }
-
-export const Likes = sequelize.define<LikesInstance>("Likes", {
-  id: {
-    allowNull: false,
-    autoIncrement: false,
-    primaryKey: true,
-    type: DataTypes.UUID,
-    unique: true,
+Likes.init(
+  {
+    id: {
+      allowNull: false,
+      autoIncrement: false,
+      primaryKey: true,
+      type: DataTypes.UUID,
+      unique: true,
+    },
   },
-});
-
-Likes.belongsTo(Posts, {
-  foreignKey: "PostId",
-  onDelete: "cascade",
-  as: "post",
-})
-
-Likes.belongsTo(Users, {
-  foreignKey: "UserId",
-  onDelete: "cascade",
-  as: "user",
-})
-
-
-
+  { sequelize: db, modelName: "Likes" }
+);
